@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/repo-position-coupling-index/coupling_index.schema.json",
+  "title": "CouplingIndex",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["month", "repo_states", "pillar_states", "couplings", "flagged"],
+  "properties": {
+    "month": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-M(0[1-9]|1[0-2])$"
+    },
+    "repo_states": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/repo_state" }
+    },
+    "pillar_states": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/pillar_state" }
+    },
+    "couplings": {
+      "type": "array",
+      "items": { "$ref": "coupling_row.schema.json" }
+    },
+    "flagged": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/flag" }
+    }
+  },
+  "$defs": {
+    "repo_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repo_slug", "alive_status"],
+      "properties": {
+        "repo_slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "alive_status": {
+          "type": "string",
+          "enum": ["alive", "quiet", "dead"]
+        }
+      }
+    },
+    "pillar_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pillar_id", "current_verdict"],
+      "properties": {
+        "pillar_id": {
+          "type": "string",
+          "pattern": "^[A-Z0-9][A-Z0-9-]*$"
+        },
+        "current_verdict": {
+          "type": "string",
+          "enum": ["confirming", "weakening", "invalidated"]
+        }
+      }
+    },
+    "flag": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["flag", "reason", "prompt"],
+      "properties": {
+        "flag": {
+          "type": "string",
+          "enum": [
+            "build-orphan",
+            "idea-orphan",
+            "re-thesis-repo",
+            "re-examine-pillar",
+            "hedge-fired"
+          ]
+        },
+        "repo_slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "pillar_id": {
+          "type": "string",
+          "pattern": "^[A-Z0-9][A-Z0-9-]*$"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 8
+        },
+        "prompt": {
+          "type": "string",
+          "minLength": 8
+        }
+      }
+    }
+  }
+}
+

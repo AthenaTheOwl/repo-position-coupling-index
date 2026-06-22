@@ -1,82 +1,82 @@
-# Repo to Position Coupling Index
+# Repo Position Coupling Index
 
-Tags each portfolio repo with the investing-thesis pillar it implicitly bets
-on or against. A repo's traction (or death) becomes a soft signal on the
-coupled pillar. A pillar invalidation auto-flags the coupled repos for
-re-thesis.
+Monthly index linking two registries the user already maintains:
 
-## What this is
+- repo portfolio slugs
+- investing thesis pillar ids
 
-A small monthly map between two systems the user already maintains:
+Each monthly report is a Markdown file with YAML front matter. The front matter
+stores repo states, pillar states, coupling rows, and generated flags. The body
+is readable git review output.
 
-- The build portfolio (~20 repos, each with an explicit current thesis).
-- The investing thesis pillars (~6-12 falsifiable claims tracked
-  monthly in thesis-pillar-tracker).
+## What ships in v0.1
 
-Every repo gets tagged with zero or more pillars and a `direction`
-(bets-on / bets-against / hedged / orphan). Every pillar gets tagged
-with the coupled repos. The output is a single Markdown index per month
-plus a flagged-misalignments section that names:
+- JSON Schemas for coupling rows and monthly reports.
+- Pydantic runtime models under `src/coupling/`.
+- `coupling` CLI for validation, rendering, flagging, report creation, and
+  month diffs.
+- Gate scripts for voice lint, spec references, and report validation.
+- `coupling_index/2026-M07.md` as the first checked-in report artifact.
+- Example reports in `examples/` for tests and diff output.
 
-- Pillars with no coupled repo (idea-orphans).
-- Repos with no coupled pillar (build-orphans).
-- Repos whose thesis is alive but whose pillar is invalidated
-  (re-thesis the repo).
-- Pillars marked confirming but whose coupled repos died
-  (re-examine the pillar — was the win really evidence?).
-
-## Status
-
-v0 scaffold. No coupling engine, no historical evidence ingestion. Spec
-0001 defines the schema, the orphan-detection rules, and the gates that
-land in spec 0002.
-
-## How to run
-
-Placeholder. Spec 0002 will ship the CLI:
+## Install and run
 
 ```bash
-uv run coupling new --month 2026-M07
-uv run coupling diff --from 2026-M06 --to 2026-M07
-uv run coupling flag --month 2026-M07
+python -m uv run pytest
+python scripts/voice_lint.py
+python scripts/spec_check.py
+python scripts/validate_coupling_index.py
 ```
 
-For now read `specs/0001-foundation/` and `docs/first-pr.md`.
+Useful CLI commands:
 
-## Layout
-
-```
-.
-├── AGENTS.md
-├── LICENSE
-├── README.md
-├── docs/
-│   └── first-pr.md
-└── specs/
-    └── 0001-foundation/
-        ├── acceptance.md
-        ├── design.md
-        ├── requirements.md
-        └── tasks.md
+```bash
+python -m uv run coupling validate coupling_index/2026-M07.md
+python -m uv run coupling flag --month 2026-M07 --check
+python -m uv run coupling diff --from 2026-M07-EXAMPLE --to 2026-M08-EXAMPLE
+python -m uv run coupling render coupling_index/2026-M07.md
+python -m uv run coupling new --month 2026-M08 --from-month 2026-M07
 ```
 
-Planned directories:
+Without uv, the package can still be run from the repo root with:
 
-- `coupling_index/` — `<YYYY>-M<nn>.md` per month.
-- `src/coupling/` — schema, CLI, flagger.
-- `config/`
-  - `repos.yaml` — refs into the portfolio repo registry.
-  - `pillars.yaml` — refs into thesis-pillar-tracker.
-- `tests/` — schema + orphan-detection tests.
+```bash
+python -m pytest
+$env:PYTHONPATH='src'
+python -m coupling.cli validate coupling_index/2026-M07.md
+```
 
-## Why this exists
+## Report shape
 
-The user is one of the few people running both an explicit build
-portfolio AND an explicit investing portfolio with named theses on each
-side. Both sides change month by month. Without this index the
-couplings are implicit; with it, a pillar invalidation triggers an
-explicit re-thesis queue on the build side, and a repo death triggers
-an explicit re-examination queue on the investing side.
+```text
+coupling_index/
+  2026-M07.md
+examples/
+  2026-M07-EXAMPLE.md
+  2026-M08-EXAMPLE.md
+src/coupling/
+  cli.py
+  diff.py
+  flagger.py
+  frontmatter.py
+  render.py
+  schema.py
+```
+
+The flagger emits five rule types:
+
+- `build-orphan`
+- `idea-orphan`
+- `re-thesis-repo`
+- `re-examine-pillar`
+- `hedge-fired`
+
+## Boundaries
+
+- No causal inference machinery.
+- No GitHub activity crawl.
+- No auto-import from thesis-pillar-tracker.
+- No multi-user workflow.
 
 ## License
 

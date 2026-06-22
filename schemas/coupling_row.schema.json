@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/repo-position-coupling-index/coupling_row.schema.json",
+  "title": "CouplingRow",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "repo_slug",
+    "pillar_id",
+    "direction",
+    "mechanism",
+    "confidence",
+    "created_month"
+  ],
+  "properties": {
+    "repo_slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "pillar_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9][A-Z0-9-]*$"
+    },
+    "direction": {
+      "type": "string",
+      "enum": ["bets-on", "bets-against", "hedged", "orphan"]
+    },
+    "mechanism": {
+      "type": "string",
+      "minLength": 12
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["low", "medium", "high"]
+    },
+    "created_month": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-M(0[1-9]|1[0-2])$"
+    }
+  }
+}
+
