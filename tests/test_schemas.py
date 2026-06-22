@@ -9,6 +9,7 @@ from pydantic import ValidationError
 
 from repo_position_coupling_index.frontmatter import load_index
 from repo_position_coupling_index.model import CouplingIndex, CouplingRow
+from repo_position_coupling_index.cli import main
 
 
 def test_json_schemas_are_valid() -> None:
@@ -24,6 +25,14 @@ def test_example_round_trips_through_model() -> None:
     assert reparsed.month == "2026-M07"
     assert len(reparsed.couplings) == 5
     assert {flag.flag for flag in reparsed.flagged} == {"build-orphan", "re-thesis-repo"}
+
+
+def test_cli_validate_defaults_to_canonical_report(capsys) -> None:
+    assert main(["validate"]) == 0
+
+    out = capsys.readouterr().out
+    assert "validated coupling_index" in out
+    assert "couplings" in out
 
 
 def test_row_rejects_unknown_direction() -> None:

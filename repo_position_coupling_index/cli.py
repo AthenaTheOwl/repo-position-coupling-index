@@ -22,7 +22,7 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     validate = subparsers.add_parser("validate", help="validate one report")
-    validate.add_argument("path")
+    validate.add_argument("path", nargs="?", default="coupling_index/2026-M07.md")
     validate.set_defaults(func=cmd_validate)
 
     render = subparsers.add_parser("render", help="render a report from front matter")
@@ -52,8 +52,9 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def cmd_validate(args: argparse.Namespace) -> int:
-    index = load_index(args.path)
-    print(f"validated {args.path}: {len(index.couplings)} couplings, {len(index.flagged)} flags")
+    path = resolve_month(args.path, Path("coupling_index"))
+    index = load_index(path)
+    print(f"validated {path}: {len(index.couplings)} couplings, {len(index.flagged)} flags")
     return 0
 
 
