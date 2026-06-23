@@ -46,6 +46,29 @@ $env:PYTHONPATH='src'
 python -m coupling.cli validate coupling_index/2026-M07.md
 ```
 
+## live demo
+
+A no-arg `show` verb prints a ranked, readable view of the committed report:
+
+```bash
+python -m repo_position_coupling_index show
+python -m uv run coupling show
+```
+
+It ranks pillars by live build exposure (alive repos betting on a pillar,
+weighted by confidence) and ends with a one-line headline plus the open flags.
+
+Run the browser version locally:
+
+```bash
+python -m uv run --with streamlit streamlit run streamlit_app.py
+```
+
+Streamlit Cloud deploy: repo `AthenaTheOwl/repo-position-coupling-index`, branch
+`main`, main file `streamlit_app.py`.
+
+<!-- live-url: (paste the Streamlit Cloud URL here once deployed) -->
+
 ## Report shape
 
 ```text

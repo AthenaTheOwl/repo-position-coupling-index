@@ -9,6 +9,7 @@ from repo_position_coupling_index.frontmatter import load_index
 from repo_position_coupling_index.model import CouplingIndex
 from repo_position_coupling_index.render import render_index
 from repo_position_coupling_index.scoring import with_computed_flags
+from repo_position_coupling_index.show import default_report_path, show_report
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -20,6 +21,12 @@ def main(argv: Sequence[str] | None = None) -> int:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="coupling")
     subparsers = parser.add_subparsers(dest="command", required=True)
+
+    show = subparsers.add_parser(
+        "show", help="print a readable ranked view of the committed report"
+    )
+    show.add_argument("path", nargs="?", default=None)
+    show.set_defaults(func=cmd_show)
 
     validate = subparsers.add_parser("validate", help="validate one report")
     validate.add_argument("path", nargs="?", default="coupling_index/2026-M07.md")
@@ -49,6 +56,12 @@ def build_parser() -> argparse.ArgumentParser:
     new.set_defaults(func=cmd_new)
 
     return parser
+
+
+def cmd_show(args: argparse.Namespace) -> int:
+    path = args.path if args.path else default_report_path()
+    print(show_report(path), end="")
+    return 0
 
 
 def cmd_validate(args: argparse.Namespace) -> int:
