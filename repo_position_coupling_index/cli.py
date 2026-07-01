@@ -4,12 +4,14 @@ import argparse
 from pathlib import Path
 from typing import Sequence
 
+from pydantic import ValidationError
+
 from repo_position_coupling_index.diff import render_diff
-from repo_position_coupling_index.frontmatter import load_index
+from repo_position_coupling_index.frontmatter import FrontMatterError, load_index
 from repo_position_coupling_index.model import CouplingIndex
 from repo_position_coupling_index.render import render_index
 from repo_position_coupling_index.scoring import with_computed_flags
-from repo_position_coupling_index.show import default_report_path, show_report
+from repo_position_coupling_index.show import default_report_path, render_show
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -58,22 +60,42 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def read_index(path: Path) -> CouplingIndex:
+    """Load a report, turning file/parse/schema problems into a clean SystemExit.
+
+    The three read-only commands take a user-supplied path, so a missing file,
+    a directory, a non-front-matter file, or a schema-invalid report must fail
+    with an actionable message instead of a raw traceback.
+    """
+    try:
+        return load_index(path)
+    except OSError as exc:
+        # covers FileNotFoundError, IsADirectoryError (dir on Windows), PermissionError
+        raise SystemExit(f"cannot read report {path}: {exc}")
+    except FrontMatterError as exc:
+        raise SystemExit(f"invalid report {path}: {exc}")
+    except ValidationError as exc:
+        first = exc.errors()[0]
+        location = ".".join(str(part) for part in first["loc"]) or "<root>"
+        raise SystemExit(f"invalid report {path}: {location}: {first['msg']}")
+
+
 def cmd_show(args: argparse.Namespace) -> int:
-    path = args.path if args.path else default_report_path()
-    print(show_report(path), end="")
+    path = Path(args.path) if args.path else default_report_path()
+    print(render_show(read_index(path)), end="")
     return 0
 
 
 def cmd_validate(args: argparse.Namespace) -> int:
     path = resolve_month(args.path, Path("coupling_index"))
-    index = load_index(path)
+    index = read_index(path)
     print(f"validated {path}: {len(index.couplings)} couplings, {len(index.flagged)} flags")
     return 0
 
 
 def cmd_render(args: argparse.Namespace) -> int:
     path = Path(args.path)
-    index = load_index(path)
+    index = read_index(path)
     rendered = render_index(index)
     if args.write:
         path.write_text(rendered, encoding="utf-8")
