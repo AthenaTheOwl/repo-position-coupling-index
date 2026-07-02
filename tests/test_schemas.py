@@ -49,6 +49,20 @@ def test_row_rejects_unknown_direction() -> None:
         )
 
 
+def test_row_rejects_mechanism_over_three_sentences() -> None:
+    with pytest.raises(ValidationError, match="1-3 sentences"):
+        CouplingRow.model_validate(
+            {
+                "repo_slug": "repo-alpha",
+                "pillar_id": "PILLAR-001",
+                "direction": "bets-on",
+                "mechanism": "A sentence. B sentence. C sentence. D sentence.",
+                "confidence": "low",
+                "created_month": "2026-M07",
+            }
+        )
+
+
 def test_index_rejects_unknown_repo_reference() -> None:
     data = load_index("examples/2026-M07-EXAMPLE.md").as_plain_data()
     data["couplings"][0]["repo_slug"] = "missing-repo"
