@@ -14,19 +14,6 @@
 
 ## Next feature queue
 
-- Add a guided `coupling new` flow that carries the latest report forward and opens blanks for new repos and pillars.
+- Extend `coupling new` to open blank rows for repos/pillars absent from the prior report; add test coverage for `cmd_new`.
 - Add a report-to-report history ledger that records when a flag first appeared and when it cleared.
 - Add an adapter that reads exported thesis-pillar-tracker IDs without mutating either registry.
-
-- Resolve factory defect: missing PRODUCT_BRIEF.md,SYSTEM_MAP.md
-- Resolve factory defect: missing reports/*.jsonl
-- Resolve factory defect: PRODUCT_BRIEF.md is required for active repos
-- Resolve factory defect: SYSTEM_MAP.md is required for active repos
-- Resolve factory defect: expected file 'PRODUCT_BRIEF.md' is missing
-- Resolve factory defect: expected file 'SYSTEM_MAP.md' is missing
-- Resolve factory defect: expected file 'repo_position_coupling_index/cli.py' is missing
-- Resolve factory defect: expected glob 'reports/*.jsonl' matched no files
-- Resolve factory defect: module 'cli' declares source 'repo_position_coupling_index/cli.py', but it is missing
-- Resolve factory defect: module 'model' declares source 'repo_position_coupling_index/model.py', but it is missing
-- Resolve factory defect: module 'report' declares source 'repo_position_coupling_index/scoring.py', but it is missing
-- Resolve factory defect: claude_code review requested patch; inspect defect log
