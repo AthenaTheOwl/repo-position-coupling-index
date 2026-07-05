@@ -103,8 +103,7 @@ Without uv, run it from the repo root:
 
 ```bash
 python -m pytest
-$env:PYTHONPATH='src'
-python -m coupling.cli validate coupling_index/2026-M07.md
+python -m repo_position_coupling_index validate coupling_index/2026-M07.md
 ```
 
 ## Layout
@@ -115,13 +114,14 @@ coupling_index/
 examples/
   2026-M07-EXAMPLE.md
   2026-M08-EXAMPLE.md
-src/coupling/
+repo_position_coupling_index/
   cli.py
   diff.py
-  flagger.py
   frontmatter.py
+  model.py
   render.py
-  schema.py
+  scoring.py
+  show.py
 ```
 
 ## License
