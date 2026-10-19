@@ -124,10 +124,10 @@ repo_position_coupling_index/
   show.py
 ```
 
-## License
-
-MIT. See `LICENSE`.
-
 ## Method update
 
 [October method update: Several repos can express one shared exposure](docs/coupling-and-common-exposure.md).
+
+## License
+
+MIT. See `LICENSE`.
